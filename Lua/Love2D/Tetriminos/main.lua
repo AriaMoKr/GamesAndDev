@@ -3,11 +3,12 @@ marginleft, margintop = 200, 6
 width, height = 10, 15
 curpiece = 1
 lastmove = 0
+rotation = 1
 
-straight = {
+pieceI = {
   "    "..
-	"    "..
 	"****"..
+	"    "..
   "    ",
   
   " *  "..
@@ -16,70 +17,59 @@ straight = {
   " *  ",
 }
 
--- 
---**
--- **
---
+pieceT = {
+  "    "..
+  " ***"..
+  "  * "..
+  "    "
+}
 
---
---****
---
---
-
---
--- **
---**
---
-
---
--- **
--- **
---
-
---
---***
---*
---
-
---
---***
---  *
---
-
---
---***
--- *
---
+pieceS = {
+  "    "..
+  "  **"..
+  " ** "..
+  "    "
+}
 
 pieces = {
-  "    "..
-	"****"..
-	"    "..
-  "    ",
+  pieceI,
+  pieceT,
+  pieceS,
 
-	"  * " ..
-	" ***",
+  {
+    " ** "..
+    "  **"..
+    "    "..
+    "    "
+  },
+  
+  {
+    " ** "..
+    " ** "..
+    "    "..
+    "    "
+  },
 
-	"  **" ..
-	" ** ",
+  {
+    " *  "..
+    " ***"..
+    "    "..
+    "    "
+  },
+  
+  {
+    "   *"..
+    " ***"..
+    "    "..
+    "    "
+  },
 
-	" ** " ..
-	"  **",
-
-	" ** " ..
-	" ** ",
-
-	" *  " ..
-	" ***",
-
-	"   *" ..
-	" ***"
 }
 
 function doesCollide(px, py)
 	collide = false
 	
-	for y = 1, 2 do
+	for y = 1, 4 do
 		for x = 1, 4 do
 			if getCurPieceBlock(x, y) then
 				ix = px + x - 1
@@ -102,7 +92,7 @@ function love.draw()
 end
 
 function setPiece()
-	for y = 1, 2 do
+	for y = 1, 4 do
 		for x = 1, 4 do
 			if getCurPieceBlock(x, y) then
 				ix = curposx + x - 1
@@ -124,6 +114,7 @@ end
 
 function nextPiece()
   curpiece = math.random(table.getn(pieces))
+  rotation = 1
 end
 
 function dropPiece()
@@ -203,16 +194,16 @@ function drawBoard()
 end
 
 function getCurPieceBlock(x, y)
-	if x < 1 or y < 1 or x > 4 or y > 2 then
+	if x < 1 or y < 1 or x > 4 or y > 4 then
 		return false
 	end
 	i = (y - 1) * 4 + (x - 1) + 1
-	return pieces[curpiece]:sub(i, i) == "*"
+	return pieces[curpiece][rotation]:sub(i, i) == "*"
 end
 
 function drawPiece()
 	love.graphics.setColor(0, 0, 255)
-	for y = 1, 2 do
+	for y = 1, 4 do
 		for x = 1, 4 do
 			if getCurPieceBlock(x, y) then
 				ix = curposx + x - 2
