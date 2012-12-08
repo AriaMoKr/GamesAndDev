@@ -4,10 +4,7 @@ width, height = 10, 15
 curpiece = 1
 lastmove = 0
 
-pieces = { 
-	"****" ..
-	"****",
-
+pieces = {
 	"****" ..
 	"    ", 
 
@@ -67,25 +64,29 @@ function setPiece()
 			end
 		end
 	end
+  resetPiece()
 end
 
 function love.update(dt)
 	lastmove = lastmove + dt
 	if lastmove >= 1 then
 		lastmove = lastmove - 1
-		if doesCollide(curposx, curposy+1) then
-			setPiece()
-		else
-			moveDown()
-		end
+		moveDown()
 	end
 end
 
 function nextPiece()
-	curpiece = curpiece + 1
-	if curpiece >= table.getn(pieces) then
-		curpiece = 1
-	end
+--	curpiece = curpiece + 1
+--	if curpiece >= table.getn(pieces) then
+--		curpiece = 1
+--	end
+  curpiece = math.random(table.getn(pieces))
+end
+
+function dropPiece()
+  while not doesCollide(curposx, curposy+1) do
+    moveDown()
+  end
 end
 
 function love.keypressed(key)
@@ -93,14 +94,19 @@ function love.keypressed(key)
 	elseif key == "down" then moveDown()
 	elseif key == "left" then moveLeft()
 	elseif key == "right" then moveRight()
-	elseif key == "return" then nextPiece()
+	elseif key == "return" then dropPiece()
 	elseif key == "f11" then love.graphics.toggleFullscreen()
 	elseif key == "d" then debug.debug()
 	end
 end
 
+function resetPiece()
+  nextPiece()
+  curposx, curposy = 4, 1
+end
+
 function newgame()
-	curposx, curposy = 1, 1
+  resetPiece()
 	board = {}
 	for y = 1,height do
 		board[y] = {}
@@ -111,7 +117,7 @@ function newgame()
 end
 
 function love.load()
-  if arg[#arg] == "-debug" then require("mobdebug").start() end
+  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
@@ -123,7 +129,12 @@ function moveIfNoCollision(x, y)
 end
 
 function moveDown()
-	moveIfNoCollision(curposx, curposy + 1)
+  if doesCollide(curposx, curposy+1) then
+    setPiece()
+  else
+    moveIfNoCollision(curposx, curposy + 1)
+  end
+  lastmove = 0
 end
 
 function moveLeft()
