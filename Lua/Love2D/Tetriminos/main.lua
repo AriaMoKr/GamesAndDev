@@ -124,12 +124,12 @@ pieces = {
   pieceL
 }
 
-function doesCollide(px, py)
+function doesCollide(px, py, _rotation)
 	collide = false
 	
 	for y = 1, 4 do
 		for x = 1, 4 do
-			if getCurPieceBlock(x, y) then
+			if getCurPieceBlock(x, y, _rotation) then
 				ix = px + x - 1
 				iy = py + y - 1
 				if ix < 1 or ix > width or iy < 1 or iy > height then
@@ -152,7 +152,7 @@ end
 function setPiece()
 	for y = 1, 4 do
 		for x = 1, 4 do
-			if getCurPieceBlock(x, y) then
+			if getCurPieceBlock(x, y, rotation) then
 				ix = curposx + x - 1
 				iy = curposy + y - 1
 				board[iy][ix] = '*'
@@ -176,7 +176,7 @@ function nextPiece()
 end
 
 function dropPiece()
-  while not doesCollide(curposx, curposy+1) do
+  while not doesCollide(curposx, curposy+1, rotation) do
     moveDown()
   end
 end
@@ -222,14 +222,14 @@ function love.load()
 end
 
 function moveIfNoCollision(x, y)
-	if not doesCollide(x, y) then
+	if not doesCollide(x, y, rotation) then
 		curposx = x
 		curposy = y
 	end
 end
 
 function moveDown()
-  if doesCollide(curposx, curposy+1) then
+  if doesCollide(curposx, curposy+1, rotation) then
     setPiece()
   else
     moveIfNoCollision(curposx, curposy + 1)
@@ -259,19 +259,19 @@ function drawBoard()
 	end
 end
 
-function getCurPieceBlock(x, y)
+function getCurPieceBlock(x, y, _rotation)
 	if x < 1 or y < 1 or x > 4 or y > 4 then
 		return false
 	end
 	i = (y - 1) * 4 + (x - 1) + 1
-	return pieces[curpiece][rotation]:sub(i, i) == "*"
+	return pieces[curpiece][_rotation]:sub(i, i) == "*"
 end
 
 function drawPiece()
 	love.graphics.setColor(0, 0, 255)
 	for y = 1, 4 do
 		for x = 1, 4 do
-			if getCurPieceBlock(x, y) then
+			if getCurPieceBlock(x, y, rotation) then
 				ix = curposx + x - 2
 				iy = curposy + y - 2
 				love.graphics.rectangle("fill", (blocksize+1)*ix+marginleft,
