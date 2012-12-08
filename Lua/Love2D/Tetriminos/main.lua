@@ -149,6 +149,29 @@ function love.draw()
 	drawPiece()
 end
 
+function countOnLine(y)
+  c = 0
+  for x = 1, width do
+    if board[y][x] == '*' then
+      c = c + 1
+    end
+  end
+  return c
+end
+
+function clearLine(y)
+  for x = 1, width do
+    board[y][x] = ' '
+  end
+end
+
+function processLines()
+  i = height
+  if countOnLine(i) == width then
+    clearLine(i)
+  end
+end
+
 function setPiece()
 	for y = 1, 4 do
 		for x = 1, 4 do
@@ -160,6 +183,7 @@ function setPiece()
 		end
 	end
   resetPiece()
+  processLines()
 end
 
 function love.update(dt)
@@ -182,9 +206,12 @@ function dropPiece()
 end
 
 function rotatePiece()
-  rotation = rotation + 1
-  if rotation > table.getn(pieces[curpiece]) then
-    rotation = 1
+  newrotation = rotation + 1
+  if newrotation > table.getn(pieces[curpiece]) then
+    newrotation = 1
+  end
+  if not doesCollide(curposx, curposy, newrotation) then
+    rotation = newrotation
   end
 end
 
@@ -217,7 +244,7 @@ function newgame()
 end
 
 function love.load()
-  if arg[#arg] == "-debug" then require("mobdebug").start() end
+  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
