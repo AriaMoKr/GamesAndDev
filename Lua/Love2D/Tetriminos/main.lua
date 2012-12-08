@@ -57,11 +57,27 @@ function love.draw()
 	drawPiece()
 end
 
+function setPiece()
+	for y = 1, 2 do
+		for x = 1, 4 do
+			if getCurPieceBlock(x, y) then
+				ix = curposx + x - 1
+				iy = curposy + y - 1
+				board[iy][ix] = '*'
+			end
+		end
+	end
+end
+
 function love.update(dt)
 	lastmove = lastmove + dt
 	if lastmove >= 1 then
 		lastmove = lastmove - 1
-		moveDown()
+		if doesCollide(curposx, curposy+1) then
+			setPiece()
+		else
+			moveDown()
+		end
 	end
 end
 
@@ -83,8 +99,20 @@ function love.keypressed(key)
 	end
 end
 
-function love.load()
+function newgame()
 	curposx, curposy = 1, 1
+	board = {}
+	for y = 1,height do
+		board[y] = {}
+		for x = 1,width do
+			board[y][x] = ' '
+		end
+	end
+end
+
+function love.load()
+  if arg[#arg] == "-debug" then require("mobdebug").start() end
+	newgame()
 end
 
 function moveIfNoCollision(x, y)
@@ -107,9 +135,13 @@ function moveRight()
 end
 
 function drawBoard()
-	love.graphics.setColor(255, 255, 255)
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
+			if board[y+1][x+1] == '*' then
+				love.graphics.setColor(0, 255, 0)
+			else
+				love.graphics.setColor(255, 255, 255)
+			end
 			love.graphics.rectangle("fill", (blocksize+1)*x+marginleft,
 				(blocksize+1)*y+margintop, blocksize, blocksize)
 		end
