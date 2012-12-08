@@ -189,7 +189,7 @@ end
 
 function processLines()
   for r = height, 1, -1 do
-    if countOnLine(r) == width then
+    while countOnLine(r) == width do
       clearLine(r)
       moveEverythingDown(r)
     end
@@ -247,6 +247,7 @@ function love.keypressed(key)
 	elseif key == "return" then dropPiece()
 	elseif key == "f11" then love.graphics.toggleFullscreen()
 	elseif key == "d" then debug.debug()
+  elseif key == "r" then newgame()
   elseif key == " " then rotatePiece()
 	end
 end
@@ -299,11 +300,13 @@ end
 function drawBoard()
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
-			if board[y+1][x+1] ~= ' ' then
+      if board[y+1][x+1] == ' ' then
+				love.graphics.setColor(255, 255, 255)
+			elseif board[y+1][x+1] >= '1' and board[y+1][x+1] <= '7' then
         color = tonumber(board[y+1][x+1])
 				love.graphics.setColor(colors[color])
-			else
-				love.graphics.setColor(255, 255, 255)
+      else
+				love.graphics.setColor(60, 60, 60)
 			end
 			love.graphics.rectangle("fill", (blocksize+1)*x+marginleft,
 				(blocksize+1)*y+margintop, blocksize, blocksize)
