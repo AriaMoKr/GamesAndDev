@@ -7,8 +7,8 @@ rotation = 1
 
 pieceI = {
   "    "..
-	"****"..
 	"    "..
+	"****"..
   "    ",
   
   " *  "..
@@ -21,13 +21,33 @@ pieceT = {
   "    "..
   " ***"..
   "  * "..
-  "    "
+  "    ",
+
+  "  * "..
+  " ** "..
+  "  * "..
+  "    ",
+
+  "  * "..
+  " ***"..
+  "    "..
+  "    ",
+  
+  "  * "..
+  "  **"..
+  "  * "..
+  "    ",  
 }
 
 pieceS = {
   "    "..
   "  **"..
   " ** "..
+  "    ",
+
+  " *  "..
+  " ** "..
+  "  * "..
   "    "
 }
 
@@ -35,6 +55,11 @@ pieceZ = {
   "    "..
   " ** "..
   "  **"..
+  "    ",
+  
+  "  * "..
+  " ** "..
+  " *  "..
   "    "
 }
 
@@ -49,14 +74,44 @@ pieceJ = {
   "    "..
   " *  "..
   " ***"..
+  "    ",
+  
+  "    "..
+  " ** "..
+  " *  "..
+  " *  "..
+  
+  "    "..
+  "  * "..
+  "*** "..
+  "    ",
+  
+  "  * "..
+  "  * "..
+  " ** "..
   "    "
 }
 
 pieceL = {
-  "   *"..
-  " ***"..
   "    "..
-  "    "
+  "  * "..
+  "*** "..
+  "    ",
+  
+  " *  "..
+  " *  "..
+  " ** "..
+  "    ",
+  
+  "    "..
+  " ***"..
+  " *  "..
+  "    ",
+  
+  "    "..
+  " ** "..
+  "  * "..
+  "  * "
 }
 
 pieces = {
@@ -126,6 +181,13 @@ function dropPiece()
   end
 end
 
+function rotatePiece()
+  rotation = rotation + 1
+  if rotation > table.getn(pieces[curpiece]) then
+    rotation = 1
+  end
+end
+
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit")
 	elseif key == "down" then moveDown()
@@ -134,6 +196,7 @@ function love.keypressed(key)
 	elseif key == "return" then dropPiece()
 	elseif key == "f11" then love.graphics.toggleFullscreen()
 	elseif key == "d" then debug.debug()
+  elseif key == " " then rotatePiece()
 	end
 end
 
@@ -154,7 +217,7 @@ function newgame()
 end
 
 function love.load()
-  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
+  if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
