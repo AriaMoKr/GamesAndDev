@@ -37,11 +37,11 @@ end
 function doesCollide(px, py)
 	collide = false
 	
-	for y = 0, 1 do
-		for x = 0, 3 do
+	for y = 1, 2 do
+		for x = 1, 4 do
 			if getCurPieceBlock(x, y) then
-				ix = curposx + x
-				iy = curposy + y
+				ix = px + x - 1
+				iy = py + y - 1
 				if isBlockOutOfRange(ix, iy) then
 					collide = true
 				end
@@ -49,7 +49,6 @@ function doesCollide(px, py)
 		end
 	end
 
-	-- return isBlockOutOfRange(x, y)
 	return collide
 end
 
