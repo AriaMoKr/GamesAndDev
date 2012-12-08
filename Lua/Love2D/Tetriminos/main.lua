@@ -5,123 +5,133 @@ curpiece = 1
 lastmove = 0
 rotation = 1
 
+colors = {
+  {255, 0, 0},
+  {255, 127, 0},
+  {255, 0, 255},
+  {0, 0, 255},
+  {0, 255, 0},
+  {127, 127, 255},
+  {0, 255, 255}
+}  
+
 pieceI = {
   "    "..
 	"    "..
-	"****"..
+	"1111"..
   "    ",
   
-  " *  "..
-	" *  "..
-	" *  "..
-  " *  ",
-}
-
-pieceT = {
-  "    "..
-  " ***"..
-  "  * "..
-  "    ",
-
-  "  * "..
-  " ** "..
-  "  * "..
-  "    ",
-
-  "  * "..
-  " ***"..
-  "    "..
-  "    ",
-  
-  "  * "..
-  "  **"..
-  "  * "..
-  "    ",  
-}
-
-pieceS = {
-  "    "..
-  "  **"..
-  " ** "..
-  "    ",
-
-  " *  "..
-  " ** "..
-  "  * "..
-  "    "
-}
-
-pieceZ = {
-  "    "..
-  " ** "..
-  "  **"..
-  "    ",
-  
-  "  * "..
-  " ** "..
-  " *  "..
-  "    "
-}
-
-pieceO = {
-  "    "..
-  " ** "..
-  " ** "..
-  "    "
+  " 1  "..
+	" 1  "..
+	" 1  "..
+  " 1  ",
 }
 
 pieceJ = {
   "    "..
-  " *  "..
-  " ***"..
+  " 6  "..
+  " 666"..
   "    ",
   
   "    "..
-  " ** "..
-  " *  "..
-  " *  "..
+  " 66 "..
+  " 6  "..
+  " 6  "..
   
   "    "..
-  "  * "..
-  "*** "..
+  "  6 "..
+  "666 "..
   "    ",
   
-  "  * "..
-  "  * "..
-  " ** "..
+  "  6 "..
+  "  6 "..
+  " 66 "..
   "    "
 }
 
 pieceL = {
   "    "..
-  "  * "..
-  "*** "..
+  "  7 "..
+  "777 "..
   "    ",
   
-  " *  "..
-  " *  "..
-  " ** "..
-  "    ",
-  
-  "    "..
-  " ***"..
-  " *  "..
+  " 7  "..
+  " 7  "..
+  " 77 "..
   "    ",
   
   "    "..
-  " ** "..
-  "  * "..
-  "  * "
+  " 777"..
+  " 7  "..
+  "    ",
+  
+  "    "..
+  " 77 "..
+  "  7 "..
+  "  7 "
+}
+
+pieceO = {
+  "    "..
+  " 55 "..
+  " 55 "..
+  "    "
+}
+
+pieceS = {
+  "    "..
+  "  33"..
+  " 33 "..
+  "    ",
+
+  " 3  "..
+  " 33 "..
+  "  3 "..
+  "    "
+}
+
+pieceT = {
+  "    "..
+  " 222"..
+  "  2 "..
+  "    ",
+
+  "  2 "..
+  " 22 "..
+  "  2 "..
+  "    ",
+
+  "  2 "..
+  " 222"..
+  "    "..
+  "    ",
+  
+  "  2 "..
+  "  22"..
+  "  2 "..
+  "    ",  
+}
+
+pieceZ = {
+  "    "..
+  " 44 "..
+  "  44"..
+  "    ",
+  
+  "  4 "..
+  " 44 "..
+  " 4  "..
+  "    "
 }
 
 pieces = {
   pieceI,
-  pieceT,
-  pieceS,
-  pieceZ,
-  pieceO,
   pieceJ,
   pieceL
+  pieceO,
+  pieceS,
+  pieceT,
+  pieceZ,
 }
 
 function doesCollide(px, py, _rotation)
@@ -134,7 +144,7 @@ function doesCollide(px, py, _rotation)
 				iy = py + y - 1
 				if ix < 1 or ix > width or iy < 1 or iy > height then
 					collide = true
-        elseif board[iy][ix] == '*' then
+        elseif board[iy][ix] != ' ' then
           collide = true
 				end
 			end
@@ -152,7 +162,7 @@ end
 function countOnLine(y)
   c = 0
   for x = 1, width do
-    if board[y][x] == '*' then
+    if board[y][x] != ' ' then
       c = c + 1
     end
   end
@@ -285,7 +295,7 @@ end
 function drawBoard()
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
-			if board[y+1][x+1] == '*' then
+			if board[y+1][x+1] != ' ' then
 				love.graphics.setColor(0, 255, 0)
 			else
 				love.graphics.setColor(255, 255, 255)
