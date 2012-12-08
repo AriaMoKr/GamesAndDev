@@ -27,10 +27,6 @@ pieces = {
 	" ***"
 }
 
-function isBlockOutOfRange(x, y)
-	return x < 1 or x > width or y < 1 or y > height
-end
-
 function doesCollide(px, py)
 	collide = false
 	
@@ -39,8 +35,10 @@ function doesCollide(px, py)
 			if getCurPieceBlock(x, y) then
 				ix = px + x - 1
 				iy = py + y - 1
-				if isBlockOutOfRange(ix, iy) then
+				if ix < 1 or ix > width or iy < 1 or iy > height then
 					collide = true
+        elseif board[iy][ix] == '*' then
+          collide = true
 				end
 			end
 		end
@@ -76,10 +74,6 @@ function love.update(dt)
 end
 
 function nextPiece()
---	curpiece = curpiece + 1
---	if curpiece >= table.getn(pieces) then
---		curpiece = 1
---	end
   curpiece = math.random(table.getn(pieces))
 end
 
