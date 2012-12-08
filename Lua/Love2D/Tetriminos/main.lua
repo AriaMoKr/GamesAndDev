@@ -127,7 +127,7 @@ pieceZ = {
 pieces = {
   pieceI,
   pieceJ,
-  pieceL
+  pieceL,
   pieceO,
   pieceS,
   pieceT,
@@ -144,7 +144,7 @@ function doesCollide(px, py, _rotation)
 				iy = py + y - 1
 				if ix < 1 or ix > width or iy < 1 or iy > height then
 					collide = true
-        elseif board[iy][ix] != ' ' then
+        elseif board[iy][ix] ~= ' ' then
           collide = true
 				end
 			end
@@ -162,7 +162,7 @@ end
 function countOnLine(y)
   c = 0
   for x = 1, width do
-    if board[y][x] != ' ' then
+    if board[y][x] ~= ' ' then
       c = c + 1
     end
   end
@@ -198,7 +198,7 @@ function setPiece()
 			if getCurPieceBlock(x, y, rotation) then
 				ix = curposx + x - 1
 				iy = curposy + y - 1
-				board[iy][ix] = '*'
+				board[iy][ix] = tostring(curpiece)
 			end
 		end
 	end
@@ -295,8 +295,9 @@ end
 function drawBoard()
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
-			if board[y+1][x+1] != ' ' then
-				love.graphics.setColor(0, 255, 0)
+			if board[y+1][x+1] ~= ' ' then
+        color = tonumber(board[y+1][x+1])
+				love.graphics.setColor(colors[color])
 			else
 				love.graphics.setColor(255, 255, 255)
 			end
@@ -311,11 +312,11 @@ function getCurPieceBlock(x, y, _rotation)
 		return false
 	end
 	i = (y - 1) * 4 + (x - 1) + 1
-	return pieces[curpiece][_rotation]:sub(i, i) == "*"
+	return pieces[curpiece][_rotation]:sub(i, i) ~= ' '
 end
 
 function drawPiece()
-	love.graphics.setColor(0, 0, 255)
+	love.graphics.setColor(colors[curpiece])
 	for y = 1, 4 do
 		for x = 1, 4 do
 			if getCurPieceBlock(x, y, rotation) then
