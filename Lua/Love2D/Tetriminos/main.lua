@@ -165,10 +165,20 @@ function clearLine(y)
   end
 end
 
+function moveEverythingDown(y)
+  i = y
+  while i > 1 do
+    board[i] = board[i-1]
+    i = i - 1
+  end
+end
+
 function processLines()
-  i = height
-  if countOnLine(i) == width then
-    clearLine(i)
+  for r = height, 1, -1 do
+    if countOnLine(r) == width then
+      clearLine(r)
+      moveEverythingDown(r)
+    end
   end
 end
 
