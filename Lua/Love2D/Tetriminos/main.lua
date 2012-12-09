@@ -1,11 +1,11 @@
 -- initial global variable values
-blocksize = 38
-marginleft, margintop = 200, 6
-width, height = 10, 15
-curpiece = 1
-lastmove = 0
-rotation = 1
-gameover = false
+blocksize = 38 -- block size in pixels
+marginleft, margintop = 200, 6 -- offset x & y of the board in the window
+width, height = 10, 15 -- size of the board's grid x & y
+curpiece = 1 -- just a place holder for the current piece for reference purposes - it gets reset with a new game
+lastmove = 0 -- a timer for the piece lowering function - it gets reset when the piece is moved down
+rotation = 1 -- the current rotation of the current piece
+gameover = false -- game over indicator -- it gets reset with a new game
 
 -- color table used by pieces - red, gree, and blue ( 0 to 255 )
 colors = {
@@ -222,6 +222,7 @@ function setPiece()
   newPiece()
 end
 
+-- updates the game at each frame. Halts at game over and moves the piece down each time duration
 function love.update(dt)
   if gameover then
     return
@@ -233,12 +234,14 @@ function love.update(dt)
 	end
 end
 
+-- moves the piece down until it hits something
 function dropPiece()
   while not doesCollide(curposx, curposy+1, rotation) do
     moveDown()
   end
 end
 
+-- changes the rotation of the piece and makes sure that it doesn't collide first
 function rotatePiece()
   newrotation = rotation + 1
   if newrotation > table.getn(pieces[curpiece]) then
@@ -249,6 +252,7 @@ function rotatePiece()
   end
 end
 
+-- handles keyboard key presses each frame
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit")
 	elseif key == "down" then moveDown()
@@ -262,6 +266,7 @@ function love.keypressed(key)
 	end
 end
 
+-- gets called at the beginning of the game and after setting a piece down to create a new piece at the top of the screen
 function newPiece()
   curpiece = math.random(table.getn(pieces))
   rotation = 1
@@ -271,6 +276,7 @@ function newPiece()
   end
 end
 
+-- gets called at the beginning of the game and when the game is reset to clear the board and create a new piece
 function newgame()
   gameover = false
 	board = {}
@@ -283,11 +289,13 @@ function newgame()
   newPiece()
 end
 
+-- sets up debugging when enabled and creats a new game when the program gets loaded
 function love.load()
   if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
+-- moves a piece to a new location if it will not collide with something
 function moveIfNoCollision(x, y)
 	if not doesCollide(x, y, rotation) then
 		curposx = x
@@ -295,23 +303,30 @@ function moveIfNoCollision(x, y)
 	end
 end
 
+-- moves piece down and sets the piece if it collides with something
 function moveDown()
   if doesCollide(curposx, curposy+1, rotation) then
     setPiece()
   else
-    moveIfNoCollision(curposx, curposy + 1)
+    -- moveIfNoCollision(curposx, curposy + 1) - not needed because we already checked for a collision
+    curposy = curposy + 1
   end
+  -- reset piece lowering timer
   lastmove = 0
 end
 
+-- moves piece left if there isn't a collision
 function moveLeft()
 	moveIfNoCollision(curposx - 1, curposy)
 end
 
+-- moves piece right if there isn't a collision
 function moveRight()
 	moveIfNoCollision(curposx + 1, curposy)
 end
 
+-- used for copy a color table so it doesn't modify the original
+-- only a simple copy
 function copyTable(t)
   newtable = {}
   for key, value in pairs(t) do
@@ -320,15 +335,16 @@ function copyTable(t)
   return newtable
 end
 
+-- draws a particular square in the grid
+-- handles empty spaces, colored blocks, and game over darkening
 function drawSquare(x, y)
   if board[y+1][x+1] == ' ' then
-    color = copyTable({255, 255, 255})
+    color = {255, 255, 255}
   elseif board[y+1][x+1] >= '1' and board[y+1][x+1] <= '7' then
     color = copyTable(colors[tonumber(board[y+1][x+1])])
-  else
-    return
   end
   
+  -- dims the color value by 100 (255 being the brightest)
   if gameover then
     for i = 1, 3 do
       color[i] = color[i] - 100
@@ -337,11 +353,13 @@ function drawSquare(x, y)
       end
     end
   end
+  
   love.graphics.setColor(color)
   love.graphics.rectangle("fill", (blocksize+1)*x+marginleft,
     (blocksize+1)*y+margintop, blocksize, blocksize)
 end
 
+-- gets called each frame to draw the board
 function drawBoard()
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
@@ -350,6 +368,7 @@ function drawBoard()
 	end
 end
 
+-- checks for a block existing inside of a piece at a particular rotation
 function getCurPieceBlock(x, y, _rotation)
 	if x < 1 or y < 1 or x > 4 or y > 4 then
 		return false
@@ -358,6 +377,7 @@ function getCurPieceBlock(x, y, _rotation)
 	return pieces[curpiece][_rotation]:sub(i, i) ~= ' '
 end
 
+-- gets called each frame to draw the current piece at it's current location and rotation
 function drawPiece()
   if gameover then
     return
