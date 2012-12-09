@@ -1,10 +1,13 @@
+-- initial global variable values
 blocksize = 38
 marginleft, margintop = 200, 6
 width, height = 10, 15
 curpiece = 1
 lastmove = 0
 rotation = 1
+gameover = false
 
+-- color table used by pieces - red, gree, and blue ( 0 to 255 )
 colors = {
   {255, 0, 0},
   {255, 127, 0},
@@ -15,6 +18,7 @@ colors = {
   {0, 255, 255}
 }  
 
+-- each piece is listed with their corresponding rotations. The number is used as a lookup in the colors table
 pieceI = {
   "    "..
 	"    "..
@@ -124,6 +128,7 @@ pieceZ = {
   "    "
 }
 
+-- all pieces rolled up in one table for indexing
 pieces = {
   pieceI,
   pieceJ,
@@ -134,6 +139,7 @@ pieces = {
   pieceZ,
 }
 
+-- checks if the current piece will collide given the position (px, py) and the rotation (_rotation)
 function doesCollide(px, py, _rotation)
 	collide = false
 	
@@ -154,11 +160,13 @@ function doesCollide(px, py, _rotation)
 	return collide
 end
 
+-- draws each frame
 function love.draw()
 	drawBoard()
 	drawPiece()
 end
 
+-- counts the amount of blocks on the current line (y)
 function countOnLine(y)
   c = 0
   for x = 1, width do
@@ -169,12 +177,14 @@ function countOnLine(y)
   return c
 end
 
+-- wipes out the line (y) - used when line is full after the player fills it
 function clearLine(y)
   for x = 1, width do
     board[y][x] = ' '
   end
 end
 
+-- moves everything above the line (y) to line (y) after it is cleared
 function moveEverythingDown(y)
   i = y
   while i > 1 do
@@ -187,15 +197,17 @@ function moveEverythingDown(y)
   end
 end
 
+-- goes through each line to check for and wipe out lines that have been filled
 function processLines()
   for r = height, 1, -1 do
     while countOnLine(r) == width do
-      clearLine(r)
+      -- clearLine(r) -- not needed because the line is replaced by moveEverythingDown
       moveEverythingDown(r)
     end
   end
 end
 
+-- puts the current piece and rotation onto the board, processes the lines, and gets a new piece
 function setPiece()
 	for y = 1, 4 do
 		for x = 1, 4 do
@@ -206,11 +218,14 @@ function setPiece()
 			end
 		end
 	end
-  resetPiece()
   processLines()
+  newPiece()
 end
 
 function love.update(dt)
+  if gameover then
+    return
+  end
 	lastmove = lastmove + dt
 	if lastmove >= 1 then
 		lastmove = lastmove - 1
@@ -247,14 +262,17 @@ function love.keypressed(key)
 	end
 end
 
-function resetPiece()
+function newPiece()
   curpiece = math.random(table.getn(pieces))
   rotation = 1
   curposx, curposy = 4, 1
+  if doesCollide(curposx, curposy, rotation) then
+    gameover = true
+  end
 end
 
 function newgame()
-  resetPiece()
+  gameover = false
 	board = {}
 	for y = 1,height do
 		board[y] = {}
@@ -262,10 +280,11 @@ function newgame()
 			board[y][x] = ' '
 		end
 	end
+  newPiece()
 end
 
 function love.load()
-  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
+  if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
@@ -293,19 +312,40 @@ function moveRight()
 	moveIfNoCollision(curposx + 1, curposy)
 end
 
+function copyTable(t)
+  newtable = {}
+  for key, value in pairs(t) do
+    newtable[key] = value
+  end
+  return newtable
+end
+
+function drawSquare(x, y)
+  if board[y+1][x+1] == ' ' then
+    color = copyTable({255, 255, 255})
+  elseif board[y+1][x+1] >= '1' and board[y+1][x+1] <= '7' then
+    color = copyTable(colors[tonumber(board[y+1][x+1])])
+  else
+    return
+  end
+  
+  if gameover then
+    for i = 1, 3 do
+      color[i] = color[i] - 100
+      if color[i] < 0 then
+        color[i] = 0
+      end
+    end
+  end
+  love.graphics.setColor(color)
+  love.graphics.rectangle("fill", (blocksize+1)*x+marginleft,
+    (blocksize+1)*y+margintop, blocksize, blocksize)
+end
+
 function drawBoard()
 	for y = 0, height - 1 do
 		for x = 0, width - 1 do
-      if board[y+1][x+1] == ' ' then
-				love.graphics.setColor(255, 255, 255)
-			elseif board[y+1][x+1] >= '1' and board[y+1][x+1] <= '7' then
-        color = tonumber(board[y+1][x+1])
-				love.graphics.setColor(colors[color])
-      else
-				love.graphics.setColor(60, 60, 60)
-			end
-			love.graphics.rectangle("fill", (blocksize+1)*x+marginleft,
-				(blocksize+1)*y+margintop, blocksize, blocksize)
+      drawSquare(x, y)
 		end
 	end
 end
@@ -319,6 +359,9 @@ function getCurPieceBlock(x, y, _rotation)
 end
 
 function drawPiece()
+  if gameover then
+    return
+  end
 	love.graphics.setColor(colors[curpiece])
 	for y = 1, 4 do
 		for x = 1, 4 do
