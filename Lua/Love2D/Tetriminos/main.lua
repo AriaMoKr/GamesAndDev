@@ -166,20 +166,24 @@ end
 
 -- shows the game over screen
 function drawGameOver()
-  love.graphics.setColor({255, 0, 0})
-  goMargin = 10
-  height = love.graphics.getHeight()
-  width = love.graphics.getWidth()
-  gw = width - goMargin * 2
-  gh = height - goMargin * 2
+  local goMargin = 10
+  local height = love.graphics.getHeight()
+  local width = love.graphics.getWidth()
+  local gw = width - goMargin * 2
+  local gh = height - goMargin * 2
   
+  love.graphics.setColor({255, 0, 0})
   love.graphics.rectangle("fill", goMargin, goMargin, gw, gh)
 end
 
 -- draws each frame
 function love.draw()
 	drawBoard()
-	drawPiece()
+  if gameover then
+    drawGameOver()
+  else
+    drawPiece()
+  end
 end
 
 -- counts the amount of blocks on the current line (y)
