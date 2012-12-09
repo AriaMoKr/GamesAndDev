@@ -1,3 +1,7 @@
+-- Tetriminos
+-- by Aria Kraft
+-- basic puzzle block game illustrating simple Lua & Love2D game prototype
+
 -- initial global variable values
 blocksize = 38 -- block size in pixels
 marginleft, margintop = 200, 6 -- offset x & y of the board in the window
@@ -7,7 +11,7 @@ lastmove = 0 -- a timer for the piece lowering function - it gets reset when the
 rotation = 1 -- the current rotation of the current piece
 gameover = false -- game over indicator -- it gets reset with a new game
 
--- color table used by pieces - red, gree, and blue ( 0 to 255 )
+-- color table used by pieces - red, green, and blue ( 0 to 255 )
 colors = {
   {255, 0, 0},
   {255, 127, 0},
@@ -160,6 +164,18 @@ function doesCollide(px, py, _rotation)
 	return collide
 end
 
+-- shows the game over screen
+function drawGameOver()
+  love.graphics.setColor({255, 0, 0})
+  goMargin = 10
+  height = love.graphics.getHeight()
+  width = love.graphics.getWidth()
+  gw = width - goMargin * 2
+  gh = height - goMargin * 2
+  
+  love.graphics.rectangle("fill", goMargin, goMargin, gw, gh)
+end
+
 -- draws each frame
 function love.draw()
 	drawBoard()
@@ -260,7 +276,10 @@ function love.keypressed(key)
 	elseif key == "right" then moveRight()
 	elseif key == "return" then dropPiece()
 	elseif key == "f11" then love.graphics.toggleFullscreen()
-	elseif key == "d" then debug.debug()
+  
+  -- debugging stop
+	-- elseif key == "d" then debug.debug()
+  
   elseif key == "r" then newgame()
   elseif key == " " then rotatePiece()
 	end
@@ -291,7 +310,7 @@ end
 
 -- sets up debugging when enabled and creats a new game when the program gets loaded
 function love.load()
-  if arg[#arg] == "-debug" then require("mobdebug").start() end
+  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
 	newgame()
 end
 
@@ -373,15 +392,17 @@ function getCurPieceBlock(x, y, _rotation)
 	if x < 1 or y < 1 or x > 4 or y > 4 then
 		return false
 	end
+  
+  -- index of piece block - piece block is a 16 character string instead of a 4x4 character string
+  -- similar to i = 4 * y + x (basically counting each block from left to right and top to bottom)
 	i = (y - 1) * 4 + (x - 1) + 1
+  
+  -- check if indexed location in piece is not equal to a space
 	return pieces[curpiece][_rotation]:sub(i, i) ~= ' '
 end
 
 -- gets called each frame to draw the current piece at it's current location and rotation
 function drawPiece()
-  if gameover then
-    return
-  end
 	love.graphics.setColor(colors[curpiece])
 	for y = 1, 4 do
 		for x = 1, 4 do
