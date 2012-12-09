@@ -166,14 +166,14 @@ end
 
 -- shows the game over screen
 function drawGameOver()
-  local goMargin = 10
-  local height = love.graphics.getHeight()
-  local width = love.graphics.getWidth()
-  local gw = width - goMargin * 2
-  local gh = height - goMargin * 2
+  local wMargin = 10
+  local gHeight = love.graphics.getHeight()
+  local gWidth = love.graphics.getWidth()
+  local wWidth = gWidth - wMargin * 2
+  local wHeight = gHeight - wMargin * 2
   
   love.graphics.setColor({255, 0, 0})
-  love.graphics.rectangle("fill", goMargin, goMargin, gw, gh)
+  love.graphics.rectangle("fill", wMargin, wMargin, wWidth, wHeight)
 end
 
 -- draws each frame
