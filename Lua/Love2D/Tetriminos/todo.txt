@@ -1,0 +1,14 @@
+Game Over
+Levels
+  Display
+  Increasing speed
+Point system
+Line count display
+Next piece display
+Pause
+Game Menu
+  New game
+    Start level
+    Amount of starting lines
+  Help
+  High scores

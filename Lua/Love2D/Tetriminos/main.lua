@@ -218,11 +218,6 @@ function love.update(dt)
 	end
 end
 
-function nextPiece()
-  curpiece = math.random(table.getn(pieces))
-  rotation = 1
-end
-
 function dropPiece()
   while not doesCollide(curposx, curposy+1, rotation) do
     moveDown()
@@ -253,7 +248,8 @@ function love.keypressed(key)
 end
 
 function resetPiece()
-  nextPiece()
+  curpiece = math.random(table.getn(pieces))
+  rotation = 1
   curposx, curposy = 4, 1
 end
 
