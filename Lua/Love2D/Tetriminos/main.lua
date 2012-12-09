@@ -6,11 +6,15 @@
 blocksize = 38 -- block size in pixels
 marginleft, margintop = 200, 6 -- offset x & y of the board in the window
 width, height = 10, 15 -- size of the board's grid x & y
-curpiece = 1 -- just a place holder for the current piece for reference purposes - it gets reset with a new game
-lastmove = 0 -- a timer for the piece lowering function - it gets reset when the piece is moved down
+
+--reset when piece is moved down and new game
+lastmove = 0 -- a timer for the piece lowering function
+
+--reset with a new game
+curpiece = 1 -- just a place holder for the current piece for reference purposes
 rotation = 1 -- the current rotation of the current piece
-gameover = false -- game over indicator - it gets reset with a new game
-linescomplete = 0 -- filled lines counter - it gets reset with a new game
+gameover = false -- game over indicator
+linescomplete = 0 -- filled lines counter
 
 -- basic color mapping - red, green, and blue ( 0 to 255)
 white = {255, 255, 255}
@@ -155,6 +159,12 @@ pieces = {
   pieceZ,
 }
 
+-- calculates current level
+function getLevel()
+  --round down and add one
+  return math.floor(linescomplete / 10) + 1
+end
+
 -- checks if the current piece will collide given the position (px, py) and the rotation (_rotation)
 function doesCollide(px, py, _rotation)
 	collide = false
@@ -195,15 +205,30 @@ end
 function drawLinesComplete()
   local gWidth = love.graphics.getWidth()
   local wMargin = 150
-  local wPosY = 150
+  local wPosY = 100
+  
+  love.graphics.setColor(white)
   love.graphics.print("Lines:", gWidth - wMargin, wPosY, 0, 2, 2)
   love.graphics.print(linescomplete, gWidth - wMargin, wPosY + 20, 0, 2, 2)
 end
+
+-- shows the current level
+function drawCurrentLevel()
+  local gWidth = love.graphics.getWidth()
+  local wMargin = 150
+  local wPosY = 200
+  
+  love.graphics.setColor(white)
+  love.graphics.print("Level:", gWidth - wMargin, wPosY, 0, 2, 2)
+  love.graphics.print(getLevel(), gWidth - wMargin, wPosY + 20, 0, 2, 2)
+end
+
 
 -- draws each frame
 function love.draw()
 	drawBoard()
   drawLinesComplete()
+  drawCurrentLevel()
   if gameover then
     drawGameOver()
   else
@@ -267,13 +292,22 @@ function setPiece()
   newPiece()
 end
 
+-- calculates the pause between dropping pieces
+function currentDelay()
+  delay = 1 - getLevel() * 0.05
+  if delay < 0 then
+    delay = 0
+  end
+  return delay
+end
+
 -- updates the game at each frame. Halts at game over and moves the piece down each time duration
 function love.update(dt)
   if gameover then
     return
   end
 	lastmove = lastmove + dt
-	if lastmove >= 1 then
+	if lastmove >= currentDelay() then
 		lastmove = lastmove - 1
 		moveDown()
 	end
@@ -328,6 +362,7 @@ end
 function newgame()
   gameover = false
   linescomplete = 0
+  level = 1
 	board = {}
 	for y = 1,height do
 		board[y] = {}

@@ -1,6 +1,3 @@
-Levels
-  Display
-  Increasing speed
 Next piece display
 Pause
 Point system
