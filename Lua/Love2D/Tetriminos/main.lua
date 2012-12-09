@@ -11,15 +11,26 @@ lastmove = 0 -- a timer for the piece lowering function - it gets reset when the
 rotation = 1 -- the current rotation of the current piece
 gameover = false -- game over indicator -- it gets reset with a new game
 
--- color table used by pieces - red, green, and blue ( 0 to 255 )
+-- basic color mapping - red, green, and blue ( 0 to 255)
+white = {255, 255, 255}
+black = {0, 0, 0}
+red = {255, 0, 0}
+blue = {0, 0, 255}
+orange = {255, 127, 0}
+magenta = {255, 0, 255}
+green = {0, 255, 0}
+olive = {127, 127, 255}
+aqua = {0, 255, 255}
+
+-- color table used by pieces
 colors = {
-  {255, 0, 0},
-  {255, 127, 0},
-  {255, 0, 255},
-  {0, 0, 255},
-  {0, 255, 0},
-  {127, 127, 255},
-  {0, 255, 255}
+  red,
+  orange,
+  magenta,
+  blue,
+  green,
+  olive,
+  aqua
 }  
 
 -- each piece is listed with their corresponding rotations. The number is used as a lookup in the colors table
@@ -166,14 +177,17 @@ end
 
 -- shows the game over screen
 function drawGameOver()
-  local wMargin = 10
+  local wMargin = 250
   local gHeight = love.graphics.getHeight()
   local gWidth = love.graphics.getWidth()
   local wWidth = gWidth - wMargin * 2
   local wHeight = gHeight - wMargin * 2
   
-  love.graphics.setColor({255, 0, 0})
+  love.graphics.setColor(white)
   love.graphics.rectangle("fill", wMargin, wMargin, wWidth, wHeight)
+  
+  love.graphics.setColor(black)
+  love.graphics.print("Press 'R' to restart", wMargin+40, wMargin+35, 0, 2, 2)  
 end
 
 -- draws each frame
