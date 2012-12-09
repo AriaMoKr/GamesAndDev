@@ -1,11 +1,10 @@
-Game Over
+Line count display
 Levels
   Display
   Increasing speed
-Point system
-Line count display
 Next piece display
 Pause
+Point system
 Game Menu
   New game
     Start level
