@@ -9,7 +9,8 @@ width, height = 10, 15 -- size of the board's grid x & y
 curpiece = 1 -- just a place holder for the current piece for reference purposes - it gets reset with a new game
 lastmove = 0 -- a timer for the piece lowering function - it gets reset when the piece is moved down
 rotation = 1 -- the current rotation of the current piece
-gameover = false -- game over indicator -- it gets reset with a new game
+gameover = false -- game over indicator - it gets reset with a new game
+linescomplete = 0 -- filled lines counter - it gets reset with a new game
 
 -- basic color mapping - red, green, and blue ( 0 to 255)
 white = {255, 255, 255}
@@ -20,7 +21,7 @@ orange = {255, 127, 0}
 magenta = {255, 0, 255}
 green = {0, 255, 0}
 olive = {127, 127, 255}
-aqua = {0, 255, 255}
+cyan = {0, 255, 255}
 
 -- color table used by pieces
 colors = {
@@ -30,7 +31,7 @@ colors = {
   blue,
   green,
   olive,
-  aqua
+  cyan
 }  
 
 -- each piece is listed with their corresponding rotations. The number is used as a lookup in the colors table
@@ -190,9 +191,19 @@ function drawGameOver()
   love.graphics.print("Press 'R' to restart", wMargin+40, wMargin+35, 0, 2, 2)  
 end
 
+-- shows the number of filled lines
+function drawLinesComplete()
+  local gWidth = love.graphics.getWidth()
+  local wMargin = 150
+  local wPosY = 150
+  love.graphics.print("Lines:", gWidth - wMargin, wPosY, 0, 2, 2)
+  love.graphics.print(linescomplete, gWidth - wMargin, wPosY + 20, 0, 2, 2)
+end
+
 -- draws each frame
 function love.draw()
 	drawBoard()
+  drawLinesComplete()
   if gameover then
     drawGameOver()
   else
@@ -235,7 +246,7 @@ end
 function processLines()
   for r = height, 1, -1 do
     while countOnLine(r) == width do
-      -- clearLine(r) -- not needed because the line is replaced by moveEverythingDown
+      linescomplete = linescomplete + 1
       moveEverythingDown(r)
     end
   end
@@ -316,6 +327,7 @@ end
 -- gets called at the beginning of the game and when the game is reset to clear the board and create a new piece
 function newgame()
   gameover = false
+  linescomplete = 0
 	board = {}
 	for y = 1,height do
 		board[y] = {}

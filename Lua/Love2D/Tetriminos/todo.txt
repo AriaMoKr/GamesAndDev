@@ -1,4 +1,3 @@
-Line count display
 Levels
   Display
   Increasing speed
