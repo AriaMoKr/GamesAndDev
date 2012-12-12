@@ -379,6 +379,7 @@ function love.load()
   
 	font = love.graphics.newFont(12)
 	love.graphics.setFont(font)
+  love.graphics.setBackgroundColor(blue)
 	newgame()
 end
 
