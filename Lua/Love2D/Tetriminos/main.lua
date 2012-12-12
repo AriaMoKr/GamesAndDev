@@ -376,6 +376,9 @@ end
 -- sets up debugging when enabled and creats a new game when the program gets loaded
 function love.load()
   -- if arg[#arg] == "-debug" then require("mobdebug").start() end
+  
+	font = love.graphics.newFont(12)
+	love.graphics.setFont(font)
 	newgame()
 end
 
