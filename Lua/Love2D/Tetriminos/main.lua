@@ -207,7 +207,7 @@ function drawLinesComplete()
   local wMargin = 150
   local wPosY = 100
   
-  love.graphics.setColor(white)
+  love.graphics.setColor(black)
   love.graphics.print("Lines:", gWidth - wMargin, wPosY, 0, 2, 2)
   love.graphics.print(linescomplete, gWidth - wMargin, wPosY + 20, 0, 2, 2)
 end
@@ -218,7 +218,7 @@ function drawCurrentLevel()
   local wMargin = 150
   local wPosY = 200
   
-  love.graphics.setColor(white)
+  love.graphics.setColor(black)
   love.graphics.print("Level:", gWidth - wMargin, wPosY, 0, 2, 2)
   love.graphics.print(getLevel(), gWidth - wMargin, wPosY + 20, 0, 2, 2)
 end
@@ -377,7 +377,7 @@ end
 function love.load()
   -- if arg[#arg] == "-debug" then require("mobdebug").start() end
   
-	font = love.graphics.newFont(12)
+	font = love.graphics.newFont(10)
 	love.graphics.setFont(font)
   love.graphics.setBackgroundColor(blue)
 	newgame()
