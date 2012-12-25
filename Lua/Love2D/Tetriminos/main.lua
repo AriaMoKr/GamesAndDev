@@ -223,10 +223,20 @@ function drawCurrentLevel()
   love.graphics.print(getLevel(), gWidth - wMargin, wPosY + 20, 0, 2, 2)
 end
 
+function drawInfoBlock()
+  local gWidth = love.graphics.getWidth()
+  local gHeight = love.graphics.getHeight()
+  local wMargin = 150
+  local wPosY = 100
+  
+  love.graphics.setColor(white)
+  love.graphics.rectangle("fill", gWidth - 175, 75, 150, 200)
+end
 
 -- draws each frame
 function love.draw()
 	drawBoard()
+  drawInfoBlock()
   drawLinesComplete()
   drawCurrentLevel()
   if gameover then
